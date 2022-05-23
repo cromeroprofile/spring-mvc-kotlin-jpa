@@ -9,8 +9,15 @@ This is an example project using Spring mvc and  Spring data jpa using Kotlin.
 
 ## Implemented features
 
-* Message controller endpoint localhost:8080/message
+* Message controller endpoint localhost:8080/message (Post/Get)
 * Message data class
 * Message mapper using Kotlin's extension
 * Service and Controller layer tested
+* Controller test examples using MockMvc Kotlin DSL
 * Open Api 3 documentation http://localhost:8080/swagger-ui/index.html
+
+## Test services
+A postman file was added to main/resources to be able to test endpoints using Postman.
+If you do not have Postman installed in your machine you will  have available swagger documentation http://localhost:8080/swagger-ui/index.html to
+be able to test it.
+
