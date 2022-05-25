@@ -24,7 +24,7 @@ import javax.persistence.Id
 data class MessageModel(
     @Id @GeneratedValue var id: Long? = null,
     @Column(nullable = false)
-    var text: String = ""
+    val text: String = ""
 )
 
 data class MessageOut(
