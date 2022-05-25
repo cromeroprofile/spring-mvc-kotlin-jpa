@@ -16,7 +16,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 
 
 @WebMvcTest
-class MessageControllerTest(@Autowired val mockMvc: MockMvc) {
+class MessageControllerTest {
+
+    @Autowired
+    lateinit var mockMvc: MockMvc
 
     @MockBean
     lateinit var messageService: MessageService
