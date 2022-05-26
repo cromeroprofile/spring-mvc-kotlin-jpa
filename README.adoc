@@ -15,6 +15,7 @@ This is an example project using Spring mvc and  Spring data jpa using Kotlin.
 * Service and Controller layer tested
 * Controller test examples using MockMvc Kotlin DSL
 * Open Api 3 documentation http://localhost:8080/swagger-ui/index.html
+* Continuos integration using Github Actions
 
 ## Test services
 A postman file was added to main/resources to be able to test endpoints using Postman.
