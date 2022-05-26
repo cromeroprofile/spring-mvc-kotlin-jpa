@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
 import javax.persistence.Column
@@ -70,10 +71,12 @@ class MessageController(val messageService: MessageService) {
             ApiResponse(responseCode = "404", description = "not found", content = [Content()])]
     )
     @GetMapping
-    fun findAll(@Parameter(description="Get all messages do not include the text")
-                @RequestParam excludeText: String?): List<MessageOut> {
+    fun findAll(
+        @Parameter(description = "Get all messages do not include the text")
+        @RequestParam excludeText: String?
+    ): List<MessageOut> {
         return messageService.findAll(excludeText)
-                }
+    }
 
 
     @Operation(summary = "Create a messageOut")
@@ -110,8 +113,9 @@ class MessageServiceImpl(val messageRepository: MessageRepository) : MessageServ
 
     override fun findAll(excludeText: String?): List<MessageOut> {
 
-//        text?.let { text -> messageRepository.findByTextNot(text).map { it.covertToMessage() } }
-//        ? : messageRepository.findAll().map { it.covertToMessage() }
+        // same behaviour using kotlin's nullability features let and elvis operator
+        // return excludeText?.let { text -> messageRepository.findByTextNot(text).map { it.covertToMessage() } }
+        //     ?:  messageRepository.findAll().map { it.covertToMessage() }
 
         return if (excludeText != null) {
             messageRepository.findByTextNot(excludeText).map { it.covertToMessage() }
@@ -120,11 +124,10 @@ class MessageServiceImpl(val messageRepository: MessageRepository) : MessageServ
         }
     }
 
-
 }
 
 // repository
-
+@Repository
 interface MessageRepository : JpaRepository<MessageModel, Long> {
     fun findByTextNot(text: String): List<MessageModel>
 }
