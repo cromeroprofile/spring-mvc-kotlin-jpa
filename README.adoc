@@ -4,7 +4,7 @@ This is an example project using Spring mvc and  Spring data jpa using Kotlin.
 
 ## Prerequisites
 
-* Java 11+
+* Java 17+
 * Maven 3 installed.
 
 ## Implemented features
