@@ -1,4 +1,4 @@
-# Spring mvc using Spring data jpa using Kotlin
+# Spring mvc + Spring data jpa using Kotlin
 
 This is an example project using Spring mvc and  Spring data jpa using Kotlin.
 
