@@ -1,5 +1,7 @@
 package com.example.kotlinmvc
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -7,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.data.jpa.repository.JpaRepository
@@ -55,7 +58,13 @@ fun MessageModel.covertToMessage() = MessageOut(
 
 @RestController
 @RequestMapping("/message")
-class MessageController(val messageService: MessageService) {
+class MessageController(val messageService: MessageService, val meterRegistry: MeterRegistry) {
+
+    private var testCounterOK: Counter = meterRegistry.counter("otp_ok")
+    private var testCounterKo: Counter = meterRegistry.counter("otp_ko")
+
+
+    private val logger = KotlinLogging.logger {}
 
     @Operation(summary = "Get all messages - exclude result if excludedText is provided")
     @ApiResponses(
@@ -76,6 +85,22 @@ class MessageController(val messageService: MessageService) {
         @RequestParam excludeText: String?
     ): List<MessageOut> {
         return messageService.findAll(excludeText)
+    }
+
+
+    @GetMapping( "/ok")
+    fun otpOk(
+    ): String {
+        logger.info { "pasa ok otp 2" }
+        testCounterOK.increment()
+        return  testCounterOK.count().toString()
+    }
+    @GetMapping( "/ko")
+    fun otpFail(
+    ): String {
+        logger.info { "pasa ok" }
+        testCounterKo.increment()
+        return "ko"
     }
 
 
