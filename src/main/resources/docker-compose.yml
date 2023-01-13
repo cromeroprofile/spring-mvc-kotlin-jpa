@@ -4,10 +4,6 @@ services:
   grafana:
     image: grafana/grafana
     container_name: grafana
-
-    # Required valid permission for /var/lib/grafana to create files and folders
-    # Since I run from the root so both uid and gid are 0:0
-    # but you can use the command i.e. (id) without brackets to find your user correct numbers
     user: "0:0"
     ports:
       - 3000:3000
@@ -20,7 +16,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - /Users/cromero/Projects/tracinng/spring-mvc-kotlin-jpa/src/main/resources/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
 
      # fixed the path here as originally you wrote without /etc
      # while in above line you are mentioning /etc/ so was causing errors

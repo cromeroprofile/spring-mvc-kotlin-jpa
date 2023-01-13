@@ -9,16 +9,31 @@ This is an example project using Spring mvc and  Spring data jpa using Kotlin.
 
 ## Implemented features
 
-* Message controller endpoint localhost:8080/message (Post/Get)
-* Message data class
-* Message mapper using Kotlin's extension
-* Service and Controller layer tested
-* Controller test examples using MockMvc Kotlin DSL
-* Open Api 3 documentation http://localhost:8080/swagger-ui/index.html
-* Continuos integration using Github Actions
+* Use docker compose services main/resource (Grafana-Prometheus)
+* Change targets in prometheus.yml (<spring-boot-application-ip>:<spring-boot-port> of your localhost)
+* Run docker-compose up
+* Run Spring boot application
+* Check Spring boot log sending actuator information to Prometheus
 
-## Test services
-A postman file was added to main/resources to be able to test endpoints using Postman.
-If you do not have Postman installed in your machine you will  have available swagger documentation http://localhost:8080/swagger-ui/index.html to
-be able to test it.
+   GET "/actuator/prometheus", parameters={}
+* Check Prometheus receive actuator information (http://localhost:9090/):
+
+  Write "otp_ok_total" and execute query
+
+* Configure datasource kibana definition:
+
+    URL --> http://prometheus:9090
+
+Note!!!!! prometheus server name must be the same defined  prometheus container name defined in docker-compose yml
+
+
+* Configure Spring Micrometer Dashboard (4701)
+
+* Test your metrics creating serveral http calls to
+      http://localhost:8081/message/ok
+      http://localhost:8081/message/ko
+
+* Add graphics using otp_ok_total/otp_ko_total metrics
+
+Query example floor(increase(otp_ok_total[1m]))
 
