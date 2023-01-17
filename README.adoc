@@ -29,7 +29,8 @@ image::images/containers.png[]
 image::images/app-log.png[]
 
    GET "/actuator/prometheus", parameters={}
-* Check Prometheus receive actuator information (http://localhost:9090/):
+
+* Check Prometheus receive actuator info (http://localhost:9090/):
 
 image::images/prometheus.png[]
 
