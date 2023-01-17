@@ -7,16 +7,31 @@ This is an example project using Spring mvc and  Spring data jpa using Kotlin.
 * Java 17+
 * Maven 3 installed.
 
-## Implemented features
+## Configure Grafana Prometheus enviroment
 
 * Use docker compose services main/resource (Grafana-Prometheus)
-* Change targets in prometheus.yml (<spring-boot-application-ip>:<spring-boot-port> of your localhost)
-* Run docker-compose up
+
+image::images/docker-compose.png[]
+
+* Change targets defined in prometheus.yml (<spring-boot-application-ip>:<spring-boot-port> of your localhost)
+
+image::images/targets.png[]
+
+* Run docker-compose up (main/resources)
+
+image::images/containers.png[]
+
 * Run Spring boot application
+
+
 * Check Spring boot log sending actuator information to Prometheus
+
+image::images/app-log.png[]
 
    GET "/actuator/prometheus", parameters={}
 * Check Prometheus receive actuator information (http://localhost:9090/):
+
+image::images/prometheus.png[]
 
   Write "otp_ok_total" and execute query
 
@@ -24,10 +39,16 @@ This is an example project using Spring mvc and  Spring data jpa using Kotlin.
 
     URL --> http://prometheus:9090
 
-Note!!!!! prometheus server name must be the same defined  prometheus container name defined in docker-compose yml
+image::images/grafana.png[]
+
+NOTE: prometheus server name must be the same defined  prometheus container name defined in docker-compose yml
 
 
 * Configure Spring Micrometer Dashboard (4701)
+
+image::images/import-1.png[]
+image::images/import-2.png[]
+image::images/import-3.png[]
 
 * Test your metrics creating serveral http calls to
       http://localhost:8081/message/ok
@@ -35,5 +56,7 @@ Note!!!!! prometheus server name must be the same defined  prometheus container 
 
 * Add graphics using otp_ok_total/otp_ko_total metrics
 
-Query example floor(increase(otp_ok_total[1m]))
+image::images/grafana-panel.png[]
+
+Query example floor(sum(increase(otp_ok_total[1m])))
 
