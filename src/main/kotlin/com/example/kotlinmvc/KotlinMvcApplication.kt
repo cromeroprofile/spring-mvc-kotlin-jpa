@@ -12,15 +12,40 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import mu.KotlinLogging
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 import org.springframework.web.bind.annotation.*
+import java.lang.NullPointerException
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
 
+
+@ControllerAdvice
+class GlobalExceptionHandler {
+    private val logger = KotlinLogging.logger {}
+
+
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Customer could not be found!")
+    @ExceptionHandler(RuntimeException::class)
+    fun customerNotFound(exception: RuntimeException) {
+        logger.error (exception){ "Exception" }
+    }
+}
+
+@Configuration
+class MyConfig {
+    @Bean
+    fun otpCounterOk(registry: MeterRegistry): Counter = registry.counter("otp_ok")
+
+    @Bean
+    fun otpCounterKo(registry: MeterRegistry): Counter = registry.counter("otp_ko")
+}
 
 // data classes
 
@@ -58,10 +83,8 @@ fun MessageModel.covertToMessage() = MessageOut(
 
 @RestController
 @RequestMapping("/message")
-class MessageController(val messageService: MessageService, val meterRegistry: MeterRegistry) {
+class MessageController(val messageService: MessageService, val meterRegistry: MeterRegistry, val otpCounterOk: Counter,val otpCounterKo: Counter ) {
 
-    private var testCounterOK: Counter = meterRegistry.counter("otp_ok")
-    private var testCounterKo: Counter = meterRegistry.counter("otp_ko")
 
 
     private val logger = KotlinLogging.logger {}
@@ -92,15 +115,24 @@ class MessageController(val messageService: MessageService, val meterRegistry: M
     fun otpOk(
     ): String {
         logger.info { "pasa ok otp 2" }
-        testCounterOK.increment()
-        return  testCounterOK.count().toString()
+        otpCounterOk.increment()
+        return  otpCounterOk.count().toString()
     }
     @GetMapping( "/ko")
     fun otpFail(
     ): String {
         logger.info { "pasa ok" }
-        testCounterKo.increment()
-        return "ko"
+        otpCounterKo.increment()
+        return  otpCounterKo.count().toString()
+    }
+
+
+    @GetMapping( "/exception")
+    fun exception(
+    ): String {
+        logger.info { "pasa exception" }
+        throw NullPointerException("peteee")
+        return  otpCounterKo.count().toString()
     }
 
 
