@@ -1,15 +1,20 @@
 # Spring mvc + Spring data jpa using Kotlin
 
-This is an example project using Spring mvc and  Spring data jpa using Kotlin.
+This is an example project using Spring mvc + Kotlin monitoring tracing (Spring Sleuth
+Zipkin) and metrics (Spring Micrometer with Prometheus)
 
 ## Prerequisites
 
 * Java 17+
 * Maven 3 installed.
 
-## Configure Grafana Prometheus enviroment
+## Configure Grafana Prometheus environment
 
-* Use docker compose services main/resource (Grafana-Prometheus)
+* Use docker compose services main/resource including several containers:
+
+* Grafana: http://localhost:3000
+* Prometheus: http://localhost:9090
+* Zipkin: http://localhost:9411/
 
 image::images/docker-compose.png[]
 
@@ -52,12 +57,44 @@ image::images/import-2.png[]
 image::images/import-3.png[]
 
 * Test your metrics creating serveral http calls to
-      http://localhost:8081/message/ok
-      http://localhost:8081/message/ko
+      ** http://localhost:8081/message/ok
+      ** http://localhost:8081/message/ko
+      ** http://localhost:8081/message/exception
 
 * Add graphics using otp_ok_total/otp_ko_total metrics
 
+** show all otp_ok operations 1 minute
+
+  floor(sum(increase(otp_ok_total[1m])))
+
 image::images/grafana-panel.png[]
 
-Query example floor(sum(increase(otp_ok_total[1m])))
+** show all http code endpoints calls (count)
 
+increase(http_server_requests_seconds_count{}[1m])
+{{status}} {{method}} {{uri}}
+
+image::images/http-status.png[]
+
+** show all http request code endpoints detailed info (count)
+
+increase(http_server_requests_seconds_count{}[1m])
+legend : Auto
+
+image::images/http-request-all-tag-info.png[]
+
+** show all http request group by status  (count)
+
+sum(increase(http_server_requests_seconds_count{}[1m])) by (status)
+increase(http_server_requests_seconds_count{}[1m])
+legend {{status}}
+
+image::images/http-request-group-status.png[]
+
+
+* Test Zipkin tracing
+
+Open http://localhost:9411/ and get last 15 minutes tracing info ordered by
+
+image::images/zipkin.png[]
+image::images/zipkin-ko.png[]

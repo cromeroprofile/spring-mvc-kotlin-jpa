@@ -1,6 +1,16 @@
 version: "3"
 
 services:
+  zipkin:
+      image: ghcr.io/openzipkin/zipkin-slim:${TAG:-latest}
+      container_name: zipkin
+      environment:
+        - STORAGE_TYPE=mem
+        # Point the zipkin at the storage backend
+        - MYSQL_HOST=mysql
+      ports:
+        # Port used for the Zipkin UI and HTTP Api
+        - 9411:9411
   grafana:
     image: grafana/grafana
     container_name: grafana
